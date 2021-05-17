@@ -1,0 +1,54 @@
+pool:
+  vmImage: macOS-10.15
+trigger:
+- buildbranch_osx
+pr: none
+stages:
+- stage: stage_0
+  jobs:
+  - job: ros_noetic_franka_description_ros_noetic_franka_msgs_ros_noetic_libfranka_ros_noetic_tf2_web_republisher
+    steps:
+    - script: |-
+        \
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+      env:
+        ANACONDA_API_TOKEN: $(ANACONDA_API_TOKEN)
+        CURRENT_RECIPES: ros-noetic-franka-description ros-noetic-franka-msgs ros-noetic-libfranka
+          ros-noetic-tf2-web-republisher
+      displayName: Build ros-noetic-franka-description ros-noetic-franka-msgs ros-noetic-libfranka
+        ros-noetic-tf2-web-republisher
+- stage: stage_1
+  jobs:
+  - job: ros_noetic_franka_hw_ros_noetic_franka_gripper_ros_noetic_panda_moveit_config_ros_noetic_franka_visualization
+    steps:
+    - script: |-
+        \
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+      env:
+        ANACONDA_API_TOKEN: $(ANACONDA_API_TOKEN)
+        CURRENT_RECIPES: ros-noetic-franka-hw ros-noetic-franka-gripper ros-noetic-panda-moveit-config
+          ros-noetic-franka-visualization
+      displayName: Build ros-noetic-franka-hw ros-noetic-franka-gripper ros-noetic-panda-moveit-config
+        ros-noetic-franka-visualization
+- stage: stage_2
+  jobs:
+  - job: ros_noetic_franka_control_ros_noetic_franka_example_controllers_ros_noetic_franka_ros
+    steps:
+    - script: |-
+        \
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+      env:
+        ANACONDA_API_TOKEN: $(ANACONDA_API_TOKEN)
+        CURRENT_RECIPES: ros-noetic-franka-control ros-noetic-franka-example-controllers
+          ros-noetic-franka-ros
+      displayName: Build ros-noetic-franka-control ros-noetic-franka-example-controllers
+        ros-noetic-franka-ros
