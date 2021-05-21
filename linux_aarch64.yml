@@ -1,0 +1,39 @@
+pool:
+  name: Default
+  demands:
+  - Agent.OS -equals linux
+  - Agent.OSArchitecture -equals ARM64
+trigger:
+- buildbranch_linux_aarch64
+pr: none
+stages:
+- stage: stage_0
+  jobs:
+  - job: ros_noetic_catkin
+    steps:
+    - script: |-
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/run_docker_build.sh
+      env:
+        ANACONDA_API_TOKEN: $(ANACONDA_API_TOKEN)
+        CURRENT_RECIPES: ros-noetic-catkin
+        DOCKER_IMAGE: condaforge/linux-anvil-aarch64
+      displayName: Build ros-noetic-catkin
+- stage: stage_1
+  jobs:
+  - job: ros_noetic_fcl_ros_noetic_franka_msgs_ros_noetic_eigenpy_ros_noetic_ros_numpy
+    steps:
+    - script: |-
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/run_docker_build.sh
+      env:
+        ANACONDA_API_TOKEN: $(ANACONDA_API_TOKEN)
+        CURRENT_RECIPES: ros-noetic-fcl ros-noetic-franka-msgs ros-noetic-eigenpy
+          ros-noetic-ros-numpy
+        DOCKER_IMAGE: condaforge/linux-anvil-aarch64
+      displayName: Build ros-noetic-fcl ros-noetic-franka-msgs ros-noetic-eigenpy
+        ros-noetic-ros-numpy
